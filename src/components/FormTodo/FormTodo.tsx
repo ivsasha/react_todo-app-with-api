@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Todo } from '../../types/Todo';
+import classNames from 'classnames';
 
 type FormTodoProps = {
   postTodos: (s: string) => void;
@@ -37,9 +38,7 @@ export const FormTodo: React.FC<FormTodoProps> = ({
       {todos.length > 0 && (
         <button
           type="button"
-          className={
-            isActive ? 'todoapp__toggle-all active' : 'todoapp__toggle-all'
-          }
+          className={classNames('todoapp__toggle-all', { active: isActive })}
           data-cy="ToggleAllButton"
           onClick={changeComplite}
         />

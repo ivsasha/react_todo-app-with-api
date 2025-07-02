@@ -35,9 +35,7 @@ export const ErrorTodos: React.FC<ErrorTodosProps> = ({
           data-cy="HideErrorButton"
           type="button"
           className="delete"
-          onClick={() => {
-            clearError();
-          }}
+          onClick={clearError}
         />
         {error}
       </div>

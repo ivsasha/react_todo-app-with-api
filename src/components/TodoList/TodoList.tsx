@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Todo } from '../../types/Todo';
+import classNames from 'classnames';
 
 type TodoListProps = {
   todos: Todo[];
@@ -29,12 +30,52 @@ export const TodoList: React.FC<TodoListProps> = ({
     }
   }, [isEditingId]);
 
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement> | React.FocusEvent<HTMLInputElement>,
+    item: Todo,
+  ) => {
+    e.preventDefault();
+
+    if (title.trim().length === 0) {
+      setIsLoadingId(isEditingId);
+      deleteTodo(isEditingId)
+        .then(() => {
+          setIsLoadingId(0);
+          setIsEditingId(0);
+        })
+        .catch(() => {
+          setIsLoadingId(0);
+        });
+
+      return;
+    }
+
+    if (
+      title.trim() ===
+        todos.find(todo => todo.id === isEditingId)?.title.trim() ||
+      title.trim() === ''
+    ) {
+      setIsEditingId(0);
+
+      return;
+    }
+
+    setIsLoadingId(item.id);
+    changeTodo(item.id, title.trim(), item.completed)
+      .then(() => {
+        setIsEditingId(0);
+      })
+      .finally(() => {
+        setIsLoadingId(0);
+      });
+  };
+
   return (
     <section className="todoapp__main" data-cy="TodoList">
       {todos.map(item => (
         <div
           data-cy="Todo"
-          className={`todo${item.completed ? ' completed' : ''}`}
+          className={classNames('todo', { completed: item.completed })}
           key={item.id}
         >
           <label
@@ -71,44 +112,7 @@ export const TodoList: React.FC<TodoListProps> = ({
           )}
 
           {isEditingId === item.id && (
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-
-                if (title.trim().length === 0) {
-                  setIsLoadingId(isEditingId);
-                  deleteTodo(isEditingId)
-                    .then(() => {
-                      setIsLoadingId(0);
-                      setIsEditingId(0);
-                    })
-                    .catch(() => {
-                      setIsLoadingId(0);
-                    });
-
-                  return;
-                }
-
-                if (
-                  title.trim() ===
-                    todos.find(todo => todo.id === isEditingId)?.title.trim() ||
-                  title.trim() === ''
-                ) {
-                  setIsEditingId(0);
-
-                  return;
-                }
-
-                setIsLoadingId(item.id);
-                changeTodo(item.id, title.trim(), item.completed)
-                  .then(() => {
-                    setIsEditingId(0);
-                  })
-                  .finally(() => {
-                    setIsLoadingId(0);
-                  });
-              }}
-            >
+            <form onSubmit={e => handleSubmit(e, item)}>
               <input
                 data-cy="TodoTitleField"
                 type="text"
@@ -124,49 +128,17 @@ export const TodoList: React.FC<TodoListProps> = ({
                   }
                 }}
                 ref={editInput}
-                onBlur={() => {
-                  if (title.trim().length === 0) {
-                    setIsLoadingId(isEditingId);
-                    deleteTodo(isEditingId)
-                      .then(() => {
-                        setIsLoadingId(0);
-                        setIsEditingId(0);
-                      })
-                      .catch(() => {
-                        setIsLoadingId(0);
-                      });
-
-                    return;
-                  }
-
-                  if (
-                    title.trim() ===
-                      todos
-                        .find(todo => todo.id === isEditingId)
-                        ?.title.trim() ||
-                    title.trim() === ''
-                  ) {
-                    setIsEditingId(0);
-
-                    return;
-                  }
-
-                  setIsLoadingId(item.id);
-                  changeTodo(item.id, title.trim(), item.completed)
-                    .then(() => {
-                      setIsEditingId(0);
-                    })
-                    .finally(() => {
-                      setIsLoadingId(0);
-                    });
-                }}
+                onBlur={e => handleSubmit(e, item)}
               />
             </form>
           )}
 
           <div
             data-cy="TodoLoader"
-            className={`modal overlay ${isLoadingId === item.id ? 'is-active' : 'hidden'}`}
+            className={classNames('modal', 'overlay', {
+              'is-active': isLoadingId === item.id,
+              hidden: isLoadingId !== item.id,
+            })}
           >
             <div className="modal-background has-background-white-ter" />
             <div className="loader" />

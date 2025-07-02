@@ -12,13 +12,12 @@ import { TodoList } from './components/TodoList';
 import { FormTodo } from './components/FormTodo';
 import { FooterTodos } from './components/FooterTodos';
 import { ErrorTodos } from './components/ErrorTodos';
-
-type Filter = 'All' | 'Active' | 'Completed';
+import { Filter } from './types/Filter';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [error, setError] = useState('');
-  const [filterSelect, setFilterSelected] = useState<Filter>('All');
+  const [filterSelect, setFilterSelected] = useState<Filter>(Filter.All);
   const [isDisabledInput, setIsDisabledInput] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,8 +55,10 @@ export const App: React.FC = () => {
 
     setIsDisabledInput(true);
 
+    const tempId = Date.now();
+
     const tempTodo: Todo = {
-      id: 0,
+      id: tempId,
       userId: 3177,
       title: trimmedTitle,
       completed: false,
@@ -72,7 +73,7 @@ export const App: React.FC = () => {
         userId: 3177,
       });
 
-      setTodos(prev => prev.map(todo => (todo.id === 0 ? newTodo : todo)));
+      setTodos(prev => prev.map(todo => (todo.id === tempId ? newTodo : todo)));
       setSearchTerm('');
     } catch {
       setError('Unable to add a todo');
@@ -174,9 +175,9 @@ export const App: React.FC = () => {
       });
   }
 
-  function clearError() {
+  const clearError = () => {
     setError('');
-  }
+  };
 
   if (!USER_ID) {
     return <UserWarning />;
