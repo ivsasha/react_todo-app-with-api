@@ -77,7 +77,7 @@ export const App: React.FC = () => {
       setSearchTerm('');
     } catch {
       setError('Unable to add a todo');
-      setTodos(prev => prev.filter(todo => todo.id !== 0));
+      setTodos(prev => prev.filter(todo => todo.id !== tempId));
       throw new Error('Cant create new todos');
     } finally {
       setIsDisabledInput(false);
