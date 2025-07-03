@@ -129,6 +129,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                 }}
                 ref={editInput}
                 onBlur={e => handleSubmit(e, item)}
+                autoFocus
               />
             </form>
           )}
