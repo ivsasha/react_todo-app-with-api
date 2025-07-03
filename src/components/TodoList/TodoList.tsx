@@ -136,7 +136,7 @@ export const TodoList: React.FC<TodoListProps> = ({
           <div
             data-cy="TodoLoader"
             className={classNames('modal', 'overlay', {
-              'is-active': isLoadingId === item.id,
+              'is-active': isLoadingId === item.id || item.id === Date.now(),
               hidden: isLoadingId !== item.id,
             })}
           >
