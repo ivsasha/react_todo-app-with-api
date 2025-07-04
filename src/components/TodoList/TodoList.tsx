@@ -65,6 +65,7 @@ export const TodoList: React.FC<TodoListProps> = ({
       .then(() => {
         setIsEditingId(0);
       })
+      .catch(() => {})
       .finally(() => {
         setIsLoadingId(0);
       });

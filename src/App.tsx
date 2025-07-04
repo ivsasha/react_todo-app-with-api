@@ -27,23 +27,22 @@ export const App: React.FC = () => {
       .then(setTodos)
       .catch(() => {
         setError('Unable to load todos');
-        throw new Error('Cant find todos');
       });
   }, []);
 
   const filteredTodos = todos.filter(todo => {
-    if (filterSelect === 'Active') {
+    if (filterSelect === Filter.Active) {
       return !todo.completed;
     }
 
-    if (filterSelect === 'Completed') {
+    if (filterSelect === Filter.Completed) {
       return todo.completed;
     }
 
     return true;
   });
 
-  async function postTodos(title: string) {
+  const postTodos = async (title: string) => {
     const trimmedTitle = title.trim();
 
     if (trimmedTitle.length === 0) {
@@ -78,7 +77,7 @@ export const App: React.FC = () => {
     } catch {
       setError('Unable to add a todo');
       setTodos(prev => prev.filter(todo => todo.id !== tempId));
-      throw new Error('Cant create new todos');
+      throw new Error('Unable to add a todo');
     } finally {
       setIsDisabledInput(false);
 
@@ -86,9 +85,9 @@ export const App: React.FC = () => {
         inputRef.current?.focus();
       }, 0);
     }
-  }
+  };
 
-  function removeTodos(todoId: number) {
+  const removeTodos = (todoId: number) => {
     return deleteTodo(todoId)
       .then(() => {
         setTodos(prev => prev.filter(todo => todo.id !== todoId));
@@ -96,11 +95,11 @@ export const App: React.FC = () => {
       })
       .catch(() => {
         setError('Unable to delete a todo');
-        throw new Error('Cant delete todos');
+        throw new Error('Unable to delete a todo');
       });
-  }
+  };
 
-  function changeTodo(todoId: number, title: string, completed: boolean) {
+  const changeTodo = (todoId: number, title: string, completed: boolean) => {
     return patchTodos({ id: todoId, title, completed, userId: 3177 })
       .then(() => {
         setTodos(prev =>
@@ -111,11 +110,11 @@ export const App: React.FC = () => {
       })
       .catch(() => {
         setError('Unable to update a todo');
-        throw new Error('Cant change todos');
+        throw new Error('Unable to update a todo');
       });
-  }
+  };
 
-  function changeComplite() {
+  const changeComplite = () => {
     const isAllCompleted = todos.every(todo => todo.completed);
     const updatedTodos = todos.map(todo => ({
       ...todo,
@@ -137,15 +136,14 @@ export const App: React.FC = () => {
       .then(setTodos)
       .catch(() => {
         setError('Unable to update todos');
-        throw new Error('Cant change all todos');
       });
-  }
+  };
 
-  function filter(type: Filter) {
+  const filter = (type: Filter) => {
     setFilterSelected(type);
-  }
+  };
 
-  function clearCompleted() {
+  const clearCompleted = () => {
     const completedTodos = todos.filter(todo => todo.completed);
 
     Promise.allSettled(completedTodos.map(todo => deleteTodo(todo.id)))
@@ -173,7 +171,7 @@ export const App: React.FC = () => {
       .catch(() => {
         setError('Unexpected error');
       });
-  }
+  };
 
   const clearError = () => {
     setError('');

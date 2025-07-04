@@ -9,12 +9,6 @@ type FooterTodosProps = {
   selected: Filter;
 };
 
-const filterLabels: Record<Filter, string> = {
-  [Filter.All]: 'All',
-  [Filter.Active]: 'Active',
-  [Filter.Completed]: 'Completed',
-};
-
 export const FooterTodos: React.FC<FooterTodosProps> = ({
   todos,
   filter,
@@ -43,7 +37,7 @@ export const FooterTodos: React.FC<FooterTodosProps> = ({
             data-cy={`FilterLink${type}`}
             onClick={() => filter(type)}
           >
-            {filterLabels[type]}
+            {type}
           </a>
         ))}
       </nav>
